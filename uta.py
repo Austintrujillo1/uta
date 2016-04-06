@@ -15,8 +15,9 @@ url += api_key
 r = requests.get(url)
 xml = r.content
 
+#test
+
 root = etree.fromstring(xml)
 
 for child in root[1][2]:
    print(child.tag, child.attrib)
-   
