@@ -26,11 +26,39 @@ STOPDB = {"SALT LAKE CENTRAL":("XXXTX101394","XXXTX101404"),
             "SANDY CIVIC CENTER":("TX173026","TX173029"),
             "CRESCENT VIEW":("TX198093","TX198094"),
             "KIMBALLS LANE":("TX198095","TX198096"),
-            "DRAPER TOWN CENTER":("TX198097","TX198098")
+            "DRAPER TOWN CENTER":("TX198097","TX198098"),
+            "UNIVERSITY MEDICAL CENTER":("TX127252","TX127253"),
+            "FORT DOUGLAS":("TX127247","TX127251"),
+            "UNIVERSITY SOUTH CAMPUS":("TX127236","TX127243"),
+            "STADIUM":("TX126109","TX126115"),
+            "900 EAST":("TX126106","TX126101"),
+            "TROLLEY":("TX126095","TX126081"),
+            "LIBRARY":("TX126076","TX126074"),
+            "BINGHAM JUNCTION":("TX101730","TX101731"),
+            "HISTORIC GARDNER":("TX101728","TX101729"),
+            "WEST JORDAN CITY CENTER":("TX101726","TX101726"),
+            "2700 W. SUGAR FACTORY RD":("TX101724","TX101725"),
+            "JORDAN VALLEY":("TX101722","TX101723"),
+            "4800 W. OLD BINGHAM HWY":("TX101721","TX101720"),
+            "5600 W. OLD BINGHAM HWY":("TX101718","TX101719"),
+            "SOUTH JORDAN PARKWAY":("TX101716","TX101717"),
+            "DAYBREAK PARKWAY":("TX101715","TX101734")
             }
 
+station_user_input = raw_input("ENTER A STATION NAME: ")
+station_user_input = station_user_input.upper()
+direction_user_input = raw_input("Enter Direction (NB/SB): ")
+direction_user_input = direction_user_input.upper()
+direction = 0
 
-qStopID = str(STOPDB["900 SOUTH"][1]) #0 - NB 1 - SB
+if direction_user_input == "NB":
+    direction = 0
+elif direction_user_input == "SB":
+    direction = 1
+else:
+    print "Error: Please use 'NB' (Northbound) or 'SB' (Southbound)"
+
+qStopID = str(STOPDB[str(station_user_input)][direction]) #0 - NB 1 - SB
 
 api_key = "UPIIJBD0QEG"
 
