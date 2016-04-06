@@ -47,81 +47,103 @@ STOPDB = {"SALT LAKE CENTRAL":("XXXTX101394","XXXTX101404"),
 
 station_user_input = raw_input("ENTER A STATION NAME: ")
 station_user_input = station_user_input.upper()
-direction_user_input = raw_input("Enter Direction (NB/SB): ")
-direction_user_input = direction_user_input.upper()
-direction = 0
 
-if direction_user_input == "NB":
-    direction = 0
-elif direction_user_input == "SB":
-    direction = 1
-else:
-    print "Error: Please use 'NB' (Northbound) or 'SB' (Southbound)"
+nStopID = str(STOPDB[str(station_user_input)][0])
+sStopID = str(STOPDB[str(station_user_input)][1])
 
-qStopID = str(STOPDB[str(station_user_input)][direction]) #0 - NB 1 - SB
+def queryStation(sID):
+        api_key = "UPIIJBD0QEG"
 
-api_key = "UPIIJBD0QEG"
+        url = "http://api.rideuta.com/SIRI/SIRI.svc/"
+        url += "StopMonitor?stopid=" #Query type
+        url += sID #Stop ID
+        url += "&minutesout=20" #How far in the future to query
+        url += "&onwardcalls=false" #Include vehicle calls inbetween current location and stop
+        url += "&filterroute=" #Filter vehicles
+        url += "&usertoken="
+        url += api_key
 
-url = "http://api.rideuta.com/SIRI/SIRI.svc/"
-url += "StopMonitor?stopid=" #Query type
-url += qStopID #Stop ID
-url += "&minutesout=180" #How far in the future to query
-url += "&onwardcalls=false" #Include vehicle calls inbetween current location and stop
-url += "&filterroute=" #Filter vehicles
-url += "&usertoken="
-url += api_key
+        r = requests.get(url)
+        xml = r.content
 
-r = requests.get(url)
-xml = r.content
+        d = xmldict.xml_to_dict(xml)
 
-d = xmldict.xml_to_dict(xml)
+        d2 = d['{http://www.siri.org.uk/siri}Siri']['{http://www.siri.org.uk/siri}StopMonitoringDelivery']['{http://www.siri.org.uk/siri}MonitoredStopVisit']['{http://www.siri.org.uk/siri}MonitoredVehicleJourney']
 
-d2 = d['{http://www.siri.org.uk/siri}Siri']['{http://www.siri.org.uk/siri}StopMonitoringDelivery']['{http://www.siri.org.uk/siri}MonitoredStopVisit']['{http://www.siri.org.uk/siri}MonitoredVehicleJourney']
-
-#Print Query Header
-print ("\nQUERY STATION: %s \n" % colored.black(d['{http://www.siri.org.uk/siri}Siri']['{http://www.siri.org.uk/siri}StopMonitoringDelivery']['{http://www.siri.org.uk/siri}Extensions']['{http://www.siri.org.uk/siri}StopName']))
-
-#Print query data
-for x in d2:
-
-    xname = str(x['{http://www.siri.org.uk/siri}PublishedLineName'])
-    xlinenumber = str(x['{http://www.siri.org.uk/siri}LineRef'])
-    xdest = str(x['{http://www.siri.org.uk/siri}DirectionRef'])
-    xtime = int(x['{http://www.siri.org.uk/siri}MonitoredCall']['{http://www.siri.org.uk/siri}Extensions']['{http://www.siri.org.uk/siri}EstimatedDepartureTime'])
-    xtime = xtime / 60 #convert to minutes
-    if xname == "RED LINE":
-
-        if xdest == 'TO DAYBREAK':
-            xdest = "SB"
-        elif xdest == 'TO MEDICAL':
-            xdest = "NB"
-
-        puts(colored.red("Line Name: %s" % xname))
-        puts(colored.red("Line Number: %s" % xlinenumber))
-        puts(colored.red("Direction: %s" % xdest))
-        puts(colored.red("Est Departure: %s Minutes" % xtime))
-        print "\n"
-    elif xname == "GREEN LINE":
-
-        if xdest == 'TO WEST VALLEY':
-            xdest = "SB"
+        if '{http://www.siri.org.uk/siri}MonitoredVehicleJourney' not in d['{http://www.siri.org.uk/siri}Siri']['{http://www.siri.org.uk/siri}StopMonitoringDelivery']['{http://www.siri.org.uk/siri}MonitoredStopVisit']:
+            print "Uh Oh!"
         else:
-            xdest = "NB"
+            #Print Query Header
+            print ("\nQUERY STATION: %s \n" % colored.black(d['{http://www.siri.org.uk/siri}Siri']['{http://www.siri.org.uk/siri}StopMonitoringDelivery']['{http://www.siri.org.uk/siri}Extensions']['{http://www.siri.org.uk/siri}StopName']))
+            getData(nStopID, 0)
+            getData(sStopID, 1)
 
-        puts(colored.green("Line Name: %s" % xname))
-        puts(colored.green("Line Number: %s" % xlinenumber))
-        puts(colored.green("Direction: %s" % xdest))
-        puts(colored.green("Est Departure: %s Minutes" % xtime))
-        print "\n"
-    elif xname == "BLUE LINE":
+def getData(sID, dID):
+    api_key = "UPIIJBD0QEG"
 
-        if xdest == 'TO DRAPER':
-            xdest = "SB"
-        elif xdest == 'TO SALT LAKE CT':
-            xdest = "NB"
+    url = "http://api.rideuta.com/SIRI/SIRI.svc/"
+    url += "StopMonitor?stopid=" #Query type
+    url += sID #Stop ID
+    url += "&minutesout=20" #How far in the future to query
+    url += "&onwardcalls=false" #Include vehicle calls inbetween current location and stop
+    url += "&filterroute=" #Filter vehicles
+    url += "&usertoken="
+    url += api_key
 
-        puts(colored.blue("Line Name: %s" % xname))
-        puts(colored.blue("Line Number: %s" % xlinenumber))
-        puts(colored.blue("Direction: %s" % xdest))
-        puts(colored.blue("Est Departure: %s Minutes" % xtime))
-        print "\n"
+    r = requests.get(url)
+    xml = r.content
+
+    d = xmldict.xml_to_dict(xml)
+
+    d2 = d['{http://www.siri.org.uk/siri}Siri']['{http://www.siri.org.uk/siri}StopMonitoringDelivery']['{http://www.siri.org.uk/siri}MonitoredStopVisit']['{http://www.siri.org.uk/siri}MonitoredVehicleJourney']
+
+    if dID == 0:
+        print "---------NB---------\n"
+    elif dID == 1:
+        print "---------SB---------\n"
+    #Print query data
+    for x in d2:
+
+        xname = str(x['{http://www.siri.org.uk/siri}PublishedLineName'])
+        xlinenumber = str(x['{http://www.siri.org.uk/siri}LineRef'])
+        xdest = str(x['{http://www.siri.org.uk/siri}DirectionRef'])
+        xtime = int(x['{http://www.siri.org.uk/siri}MonitoredCall']['{http://www.siri.org.uk/siri}Extensions']['{http://www.siri.org.uk/siri}EstimatedDepartureTime'])
+        xtime = xtime / 60 #convert to minutes
+        if xname == "RED LINE":
+
+            if xdest == 'TO DAYBREAK':
+                xdest = "SB"
+            elif xdest == 'TO MEDICAL':
+                xdest = "NB"
+
+            puts(colored.red("Line Name: %s" % xname))
+            puts(colored.red("Line Number: %s" % xlinenumber))
+            puts(colored.red("Direction: %s" % xdest))
+            puts(colored.red("Est Departure: %s Minutes" % xtime))
+            print "\n"
+        elif xname == "GREEN LINE":
+
+            if xdest == 'TO WEST VALLEY':
+                xdest = "SB"
+            else:
+                xdest = "NB"
+
+            puts(colored.green("Line Name: %s" % xname))
+            puts(colored.green("Line Number: %s" % xlinenumber))
+            puts(colored.green("Direction: %s" % xdest))
+            puts(colored.green("Est Departure: %s Minutes" % xtime))
+            print "\n"
+        elif xname == "BLUE LINE":
+
+            if xdest == 'TO DRAPER':
+                xdest = "SB"
+            elif xdest == 'TO SALT LAKE CT':
+                xdest = "NB"
+
+            puts(colored.blue("Line Name: %s" % xname))
+            puts(colored.blue("Line Number: %s" % xlinenumber))
+            puts(colored.blue("Direction: %s" % xdest))
+            puts(colored.blue("Est Departure: %s Minutes" % xtime))
+            print "\n"
+
+queryStation(nStopID)
