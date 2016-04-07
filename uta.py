@@ -1,5 +1,6 @@
 import requests
 import xmldict
+import time
 
 from clint.textui import colored, puts
 #{"STOP NAME":("NB ID", "SB ID")}
@@ -74,9 +75,33 @@ def queryStation(sID):
             print "Uh Oh!"
         else:
             #Print Query Header
+            localtime = time.asctime( time.localtime(time.time()) )
             print ("\nQUERY STATION: %s \n" % colored.black(d['{http://www.siri.org.uk/siri}Siri']['{http://www.siri.org.uk/siri}StopMonitoringDelivery']['{http://www.siri.org.uk/siri}Extensions']['{http://www.siri.org.uk/siri}StopName']))
+            print "Query Time: %s /n" % str(localtime)
             getData(nStopID, 0)
             getData(sStopID, 1)
+
+
+class call(object):
+
+    def __init__(self, line, number, direction, departure):
+        self.line = line
+        self.number = number
+        self.direction = direction
+        self.departure = departure
+
+    def getLine(self):
+        return self.line
+    def getNumber(self):
+        return self.number
+    def getDirection(self):
+        return self.direction
+    def getDeparture(self):
+        return self.departure
+
+
+
+
 
 def getData(sID, dID):
     api_key = "UPIIJBD0QEG"
@@ -96,7 +121,14 @@ def getData(sID, dID):
     d = xmldict.xml_to_dict(xml)
 
     d2 = d['{http://www.siri.org.uk/siri}Siri']['{http://www.siri.org.uk/siri}StopMonitoringDelivery']['{http://www.siri.org.uk/siri}MonitoredStopVisit']['{http://www.siri.org.uk/siri}MonitoredVehicleJourney']
+    calls = (1,2)
+    for x in d2:
+        i = len(calls)
+        print i
 
+
+
+    """
     if dID == 0:
         print "---------NB---------\n"
     elif dID == 1:
@@ -145,5 +177,5 @@ def getData(sID, dID):
             puts(colored.blue("Direction: %s" % xdest))
             puts(colored.blue("Est Departure: %s Minutes" % xtime))
             print "\n"
-
+"""
 queryStation(nStopID)
