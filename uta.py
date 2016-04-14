@@ -121,14 +121,10 @@ def getData(sID, dID):
     d = xmldict.xml_to_dict(xml)
 
     d2 = d['{http://www.siri.org.uk/siri}Siri']['{http://www.siri.org.uk/siri}StopMonitoringDelivery']['{http://www.siri.org.uk/siri}MonitoredStopVisit']['{http://www.siri.org.uk/siri}MonitoredVehicleJourney']
-    calls = (1,2)
+    calls = ()
     for x in d2:
         i = len(calls)
-        print i
 
-
-
-    """
     if dID == 0:
         print "---------NB---------\n"
     elif dID == 1:
@@ -177,5 +173,5 @@ def getData(sID, dID):
             puts(colored.blue("Direction: %s" % xdest))
             puts(colored.blue("Est Departure: %s Minutes" % xtime))
             print "\n"
-"""
+
 queryStation(nStopID)
